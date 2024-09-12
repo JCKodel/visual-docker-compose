@@ -1,0 +1,44 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build_runner",
+        "command": "dart",
+        "type": "process",
+        "args": [
+          "run",
+          "build_runner",
+          "watch",
+          "-d"
+        ],
+        "presentation": {
+          "reveal": "always"
+        },
+        "isBackground": false,
+        "isBuildCommand": true,
+        "group": "build"
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Flutter",
+        "request": "launch",
+        "type": "dart",
+        "flutterMode": "debug",
+        "args": [
+          "--web-port",
+          "5858"
+        ]
+      }
+    ],
+  },
+}
