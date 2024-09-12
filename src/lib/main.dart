@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-void main() {
+import 'features/window_manager.dart';
+
+Future<void> main() async {
+  await NativeWindowService.instance.initialize();
   runApp(const MainApp());
 }
 
