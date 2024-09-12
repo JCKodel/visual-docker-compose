@@ -1,8 +1,12 @@
-part of 'window_manager.dart';
+import 'dart:ui';
+
+import 'package:dart_mappable/dart_mappable.dart';
+
+part 'native_window_state.mapper.dart';
 
 @MappableClass(includeCustomMappers: [RectMapper()])
-final class WindowState with WindowStateMappable {
-  const WindowState({
+final class NativeWindowState with NativeWindowStateMappable {
+  const NativeWindowState({
     required this.bounds,
     required this.isMaximized,
   });
@@ -11,8 +15,8 @@ final class WindowState with WindowStateMappable {
 
   final bool isMaximized;
 
-  static const fromMap = WindowStateMapper.fromMap;
-  static const fromJson = WindowStateMapper.fromJson;
+  static const fromMap = NativeWindowStateMapper.fromMap;
+  static const fromJson = NativeWindowStateMapper.fromJson;
 }
 
 final class RectMapper extends SimpleMapper<Rect> {

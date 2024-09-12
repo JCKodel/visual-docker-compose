@@ -1,4 +1,11 @@
-part of 'window_manager.dart';
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:window_manager/window_manager.dart';
+
+import 'native_window_state.dart';
 
 final class NativeWindowService with WindowListener {
   const NativeWindowService._();
@@ -52,10 +59,7 @@ final class NativeWindowService with WindowListener {
 
     await windowManager.waitUntilReadyToShow(
       windowOptions,
-      () async {
-        await windowManager.show();
-        await windowManager.focus();
-      },
+      _finishWindowInitialization,
     );
   }
 
@@ -65,7 +69,7 @@ final class NativeWindowService with WindowListener {
       name: "${NativeWindowService}",
     );
 
-    final windowState = WindowState.fromJson(windowStateJson);
+    final windowState = NativeWindowState.fromJson(windowStateJson);
 
     final windowOptions = WindowOptions(
       size: windowState.bounds.size,
@@ -83,10 +87,15 @@ final class NativeWindowService with WindowListener {
           await windowManager.maximize();
         }
 
-        await windowManager.show();
-        await windowManager.focus();
+        await _finishWindowInitialization();
       },
     );
+  }
+
+  static Future<void> _finishWindowInitialization() async {
+    await windowManager.show();
+    await windowManager.focus();
+    await windowManager.setMinimumSize(const Size(375, 375));
   }
 
   Future<void> _saveWindowState() async {
@@ -102,11 +111,11 @@ final class NativeWindowService with WindowListener {
     final windowStateJson = _sharedPreferences.getString("windowState");
 
     final windowState = windowStateJson == null
-        ? WindowState(
+        ? NativeWindowState(
             bounds: windowBounds,
             isMaximized: isMaximized,
           )
-        : WindowState.fromJson(windowStateJson);
+        : NativeWindowState.fromJson(windowStateJson);
 
     final newWindowStateJson = isMaximized
         ? windowState.copyWith(isMaximized: true).toJson()
