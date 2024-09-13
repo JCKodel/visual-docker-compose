@@ -1,4 +1,8 @@
 {
   "@@locale": "en",
-  "projects": "Projects"
+  "projects": "Projects",
+  "createNewProject": "Create new project",
+  "openExistingProject": "Open existing project",
+  "fileAlreadyExists": "That folder already contains a docker-compose file.\n\nPlease, use the open existing project option instead.",
+  "ok": "OK"
 }
