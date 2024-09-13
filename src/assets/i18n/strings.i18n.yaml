@@ -1,0 +1,7 @@
+createNewProject: Create new project
+errorOpeningFile: An error occurred while opening the file.
+fileAlreadyExists: That folder already contains a docker-compose file.\n\nPlease, use the open existing project option instead.
+ok: OK
+oops: Oops!
+openExistingProject: Open existing project
+projects: Projects

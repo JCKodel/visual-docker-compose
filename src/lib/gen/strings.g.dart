@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 1
-/// Strings: 5
+/// Strings: 7
 ///
-/// Built on 2024-09-13 at 01:07 UTC
+/// Built on 2024-09-13 at 02:01 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -147,11 +147,13 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final Translations _root = this; // ignore: unused_field
 
 	// Translations
-	String get projects => 'Projects';
 	String get createNewProject => 'Create new project';
-	String get openExistingProject => 'Open existing project';
+	String get errorOpeningFile => 'An error occurred while opening the file.';
 	String get fileAlreadyExists => 'That folder already contains a docker-compose file.\n\nPlease, use the open existing project option instead.';
 	String get ok => 'OK';
+	String get oops => 'Oops!';
+	String get openExistingProject => 'Open existing project';
+	String get projects => 'Projects';
 }
 
 /// Flat map(s) containing all translations.
@@ -160,11 +162,13 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		switch (path) {
-			case 'projects': return 'Projects';
 			case 'createNewProject': return 'Create new project';
-			case 'openExistingProject': return 'Open existing project';
+			case 'errorOpeningFile': return 'An error occurred while opening the file.';
 			case 'fileAlreadyExists': return 'That folder already contains a docker-compose file.\n\nPlease, use the open existing project option instead.';
 			case 'ok': return 'OK';
+			case 'oops': return 'Oops!';
+			case 'openExistingProject': return 'Open existing project';
+			case 'projects': return 'Projects';
 			default: return null;
 		}
 	}
