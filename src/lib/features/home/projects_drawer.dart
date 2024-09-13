@@ -1,9 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:path/path.dart' as Path;
+import 'package:yaml_magic/yaml_magic.dart';
 
 import '../../gen/strings.g.dart';
 
@@ -41,7 +43,10 @@ class ProjectsDrawer extends StatelessWidget {
       return;
     }
 
-    await _openDockerComposeFile(context, path, "docker-compose.yml");
+    await _openDockerComposeFile(
+      context,
+      Path.join(path, "docker-compose.yml"),
+    );
   }
 
   static Future<void> _openExistingProject(BuildContext context) async {
@@ -60,16 +65,39 @@ class ProjectsDrawer extends StatelessWidget {
     await _openDockerComposeFile(
       context,
       pickedFile.xFiles.first.path,
-      Path.basename(pickedFile.xFiles.first.name),
     );
   }
 
   static Future<void> _openDockerComposeFile(
     BuildContext context,
-    String path,
-    String fileName,
+    String yamlFilePath,
   ) async {
-    print("Opening ${fileName} from ${path}");
+    log("Opening ${yamlFilePath}", name: "${ProjectsDrawer}");
+
+    try {
+      final yaml = YamlMagic.load(yamlFilePath);
+    } catch (ex, st) {
+      log(
+        "Failure to open ${yamlFilePath}",
+        error: ex,
+        stackTrace: st,
+        name: "${ProjectsDrawer}",
+      );
+
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(t.oops),
+          content: Text(t.errorOpeningFile),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(t.ok),
+            ),
+          ],
+        ),
+      ).ignore();
+    }
   }
 
   @override
