@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:system_theme/system_theme.dart';
 
 import 'features/home/home_view.dart';
 import 'features/window_management/native_window_service.dart';
+import 'gen/strings.g.dart';
 
 Future<void> main() async {
   await NativeWindowService.instance.initialize();
-  runApp(const MainApp());
+  LocaleSettings.useDeviceLocale();
+  runApp(TranslationProvider(child: const MainApp()));
 }
 
 final class MainApp extends StatelessWidget {
@@ -48,8 +50,13 @@ final class MainApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      locale: TranslationProvider.of(context).flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       theme: _createThemeFrom(colorScheme: lightColorScheme),
       darkTheme: _createThemeFrom(colorScheme: darkColorScheme),
       themeMode: ThemeMode.system,
