@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:path/path.dart' as Path;
+import 'package:yaml/yaml.dart';
 import 'package:yaml_magic/yaml_magic.dart';
 
 import '../../gen/strings.g.dart';
@@ -16,7 +17,7 @@ class ProjectsDrawer extends StatelessWidget {
 
   static Future<void> _createNewProject(BuildContext context) async {
     final path = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: t.createNewProject,
+      dialogTitle: t.projectsDrawer.createNewProject,
     );
 
     if (path == null || context.mounted == false) {
@@ -29,8 +30,8 @@ class ProjectsDrawer extends StatelessWidget {
       showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(t.createNewProject),
-          content: Text(t.fileAlreadyExists),
+          title: Text(t.projectsDrawer.createNewProject),
+          content: Text(t.openProjectErrors.fileAlreadyExists),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -51,7 +52,7 @@ class ProjectsDrawer extends StatelessWidget {
 
   static Future<void> _openExistingProject(BuildContext context) async {
     final pickedFile = await FilePicker.platform.pickFiles(
-      dialogTitle: t.openExistingProject,
+      dialogTitle: t.projectsDrawer.openExistingProject,
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ["yml", "yaml"],
@@ -76,28 +77,85 @@ class ProjectsDrawer extends StatelessWidget {
 
     try {
       final yaml = YamlMagic.load(yamlFilePath);
-    } catch (ex, st) {
-      log(
-        "Failure to open ${yamlFilePath}",
-        error: ex,
-        stackTrace: st,
-        name: "${ProjectsDrawer}",
-      );
 
-      showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(t.oops),
-          content: Text(t.errorOpeningFile),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(t.ok),
-            ),
-          ],
+      // TODO: create project folder, then load docker-compose.yml
+    } on YamlException catch (ex, st) {
+      final message = <String>[
+        t.openProjectErrors.unknownFailureWhileOpeningFile(
+          details: ex.message,
         ),
-      ).ignore();
+      ];
+
+      if (ex.span != null) {
+        final lines = await File(yamlFilePath).readAsLines();
+
+        message.add("On line ${ex.span!.start.line}:\n");
+
+        for (var l = 0; l < lines.length; l++) {
+          if (l >= ex.span!.start.line && l <= ex.span!.end.line) {
+            if (l > 0) {
+              message.add("${l}:${lines[l - 1]}");
+            }
+
+            message.add("${l + 1}:${lines[l]}");
+
+            if (l < lines.length - 1) {
+              message.add("${l + 2}:${lines[l + 1]}");
+            }
+          }
+        }
+      }
+
+      _showErrorDialog(
+        context: context,
+        exception: ex,
+        stackTrace: st,
+        logMessage: "Unknown failure while opening ${yamlFilePath}",
+        dialogMessage: message.join("\n"),
+        yamlFilePath: yamlFilePath,
+      );
+    } catch (ex, st) {
+      _showErrorDialog(
+        context: context,
+        exception: ex,
+        stackTrace: st,
+        logMessage: "Unknown failure while opening ${yamlFilePath}",
+        dialogMessage: t.openProjectErrors.unknownFailureWhileOpeningFile(
+          details: ex.runtimeType,
+        ),
+        yamlFilePath: yamlFilePath,
+      );
     }
+  }
+
+  static void _showErrorDialog({
+    required BuildContext context,
+    required Object exception,
+    required StackTrace stackTrace,
+    required String yamlFilePath,
+    required String logMessage,
+    required String dialogMessage,
+  }) {
+    log(
+      "Failure to open ${yamlFilePath}",
+      error: exception,
+      stackTrace: stackTrace,
+      name: "${ProjectsDrawer}",
+    );
+
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(t.oops),
+        content: Text(dialogMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(t.ok),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -111,7 +169,7 @@ class ProjectsDrawer extends StatelessWidget {
         children: [
           AppBar(
             automaticallyImplyLeading: false,
-            title: Text(t.projects),
+            title: Text(t.projectsDrawer.projects),
             backgroundColor: Colors.transparent,
             actions: [
               IconButton(
