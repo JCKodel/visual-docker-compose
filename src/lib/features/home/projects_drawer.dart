@@ -2,9 +2,10 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:path/path.dart' as Path;
+
+import '../../gen/strings.g.dart';
 
 class ProjectsDrawer extends StatelessWidget {
   const ProjectsDrawer({required this.roundCorners, super.key});
@@ -12,10 +13,8 @@ class ProjectsDrawer extends StatelessWidget {
   final bool roundCorners;
 
   static Future<void> _createNewProject(BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
-
     final path = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: loc.createNewProject,
+      dialogTitle: t.createNewProject,
     );
 
     if (path == null || context.mounted == false) {
@@ -28,12 +27,12 @@ class ProjectsDrawer extends StatelessWidget {
       showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(loc.createNewProject),
-          content: Text(loc.fileAlreadyExists),
+          title: Text(t.createNewProject),
+          content: Text(t.fileAlreadyExists),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(loc.ok),
+              child: Text(t.ok),
             ),
           ],
         ),
@@ -46,10 +45,8 @@ class ProjectsDrawer extends StatelessWidget {
   }
 
   static Future<void> _openExistingProject(BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
-
     final pickedFile = await FilePicker.platform.pickFiles(
-      dialogTitle: loc.openExistingProject,
+      dialogTitle: t.openExistingProject,
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ["yml", "yaml"],
@@ -77,8 +74,6 @@ class ProjectsDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-
     return Drawer(
       width: roundCorners ? null : 300,
       shape: roundCorners ? null : const Border(),
@@ -88,7 +83,7 @@ class ProjectsDrawer extends StatelessWidget {
         children: [
           AppBar(
             automaticallyImplyLeading: false,
-            title: Text(loc.projects),
+            title: Text(t.projects),
             backgroundColor: Colors.transparent,
             actions: [
               IconButton(
