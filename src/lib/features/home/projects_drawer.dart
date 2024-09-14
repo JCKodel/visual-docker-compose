@@ -9,8 +9,8 @@ import 'package:super_context_menu/super_context_menu.dart';
 import 'package:url_launcher/url_launcher.dart' as Launcher;
 import 'package:watch_it/watch_it.dart';
 
-import '../../dialogs/dialogs.dart';
 import '../../gen/strings.g.dart';
+import '../dialogs/dialogs.dart';
 import '../project_management/open_project_result.dart';
 import '../project_management/project.dart';
 import '../project_management/projects_service.dart';
