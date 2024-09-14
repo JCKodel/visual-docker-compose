@@ -12,7 +12,6 @@ final class NativeWindowState with NativeWindowStateMappable {
   });
 
   final Rect bounds;
-
   final bool isMaximized;
 
   static const fromMap = NativeWindowStateMapper.fromMap;

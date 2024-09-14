@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 1
-/// Strings: 10
+/// Strings: 12
 ///
-/// Built on 2024-09-13 at 02:22 UTC
+/// Built on 2024-09-14 at 02:44 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -161,8 +161,12 @@ class _StringsProjectsDrawerEn {
 
 	// Translations
 	String get createNewProject => 'Create new project';
+	String get noProjects => 'No projects';
 	String get openExistingProject => 'Open existing project';
+	String get openFolder => 'Open folder';
 	String get projects => 'Projects';
+	String get removeProject => 'Remove project';
+	String get removeProjectConfirmation => 'Are you sure you want to remove this project?\n\nThis action will only remove the project from the list, and will not delete the project folder.';
 }
 
 // Path: openProjectErrors
@@ -172,10 +176,8 @@ class _StringsOpenProjectErrorsEn {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-	String get errorOpeningFile => 'An error occurred while opening the file.';
 	String get fileAlreadyExists => 'That folder already contains a docker-compose file.\n\nPlease, use the open existing project option instead.';
-	String invalidYamlWhileOpeningFile({required Object details}) => 'The file is not a valid YAML file.\n\nDetails: ${details}';
-	String ioErrorWhileOpeningFile({required Object details}) => 'An I/O error occurred while opening the file.\n\nDetails: ${details}';
+	String parseErrorWhileOpeningFile({required Object errorLine, required Object yamlLines}) => 'The specified YAML is invalid.\n\nError on line ${errorLine}:\n\n${yamlLines}';
 	String unknownFailureWhileOpeningFile({required Object details}) => 'An unknown error occurred while opening the file.\n\nDetails: ${details}';
 }
 
@@ -186,12 +188,14 @@ extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		switch (path) {
 			case 'projectsDrawer.createNewProject': return 'Create new project';
+			case 'projectsDrawer.noProjects': return 'No projects';
 			case 'projectsDrawer.openExistingProject': return 'Open existing project';
+			case 'projectsDrawer.openFolder': return 'Open folder';
 			case 'projectsDrawer.projects': return 'Projects';
-			case 'openProjectErrors.errorOpeningFile': return 'An error occurred while opening the file.';
+			case 'projectsDrawer.removeProject': return 'Remove project';
+			case 'projectsDrawer.removeProjectConfirmation': return 'Are you sure you want to remove this project?\n\nThis action will only remove the project from the list, and will not delete the project folder.';
 			case 'openProjectErrors.fileAlreadyExists': return 'That folder already contains a docker-compose file.\n\nPlease, use the open existing project option instead.';
-			case 'openProjectErrors.invalidYamlWhileOpeningFile': return ({required Object details}) => 'The file is not a valid YAML file.\n\nDetails: ${details}';
-			case 'openProjectErrors.ioErrorWhileOpeningFile': return ({required Object details}) => 'An I/O error occurred while opening the file.\n\nDetails: ${details}';
+			case 'openProjectErrors.parseErrorWhileOpeningFile': return ({required Object errorLine, required Object yamlLines}) => 'The specified YAML is invalid.\n\nError on line ${errorLine}:\n\n${yamlLines}';
 			case 'openProjectErrors.unknownFailureWhileOpeningFile': return ({required Object details}) => 'An unknown error occurred while opening the file.\n\nDetails: ${details}';
 			case 'ok': return 'OK';
 			case 'oops': return 'Oops!';

@@ -2,9 +2,11 @@ include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
   errors:
+    avoid_positional_boolean_parameters: ignore
     directives_ordering: ignore
     lines_longer_than_80_chars: ignore
     missing_whitespace_between_adjacent_strings: ignore
+    no_default_cases: ignore
     parameter_assignments: ignore
     prefer_constructors_over_static_methods: ignore
   exclude:

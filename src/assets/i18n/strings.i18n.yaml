@@ -1,10 +1,14 @@
 projectsDrawer:
   createNewProject: Create new project
+  noProjects: No projects
   openExistingProject: Open existing project
+  openFolder: Open folder
   projects: Projects
+  removeProject: Remove project
+  removeProjectConfirmation: "Are you sure you want to remove this project?\n\nThis action will only remove the project from the list, and will not delete the project folder."
 openProjectErrors:
-  errorOpeningFile: An error occurred while opening the file.
   fileAlreadyExists: That folder already contains a docker-compose file.\n\nPlease, use the open existing project option instead.
+  parseErrorWhileOpeningFile: "The specified YAML is invalid.\n\nError on line ${errorLine}:\n\n${yamlLines}"
   unknownFailureWhileOpeningFile: "An unknown error occurred while opening the file.\n\nDetails: ${details}"
 ok: OK
 oops: Oops!

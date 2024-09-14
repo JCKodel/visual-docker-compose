@@ -1,29 +1,33 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../log/log.dart';
+import '../storage/i_storage.dart';
 import 'native_window_state.dart';
 
-final class NativeWindowService with WindowListener {
-  const NativeWindowService._();
+final class NativeWindowService with WindowListener implements Disposable {
+  const NativeWindowService._({required IStorage storage}) : _storage = storage;
 
-  static NativeWindowService? _instance;
+  final IStorage _storage;
 
-  static NativeWindowService get instance =>
-      _instance ??= const NativeWindowService._();
-
-  static late final SharedPreferences _sharedPreferences;
   static const _windowTitle = "Visual Docker Compose";
 
-  Future<void> initialize() async {
-    log("Initializing", name: "${NativeWindowService}");
+  static Future<NativeWindowService> factory() async {
+    logInfo("Initialing");
 
-    _sharedPreferences = await SharedPreferences.getInstance();
+    final instance = NativeWindowService._(storage: GetIt.I<IStorage>());
 
-    final windowStateJson = _sharedPreferences.getString("windowState");
+    await instance._initializeAsync();
+
+    return instance;
+  }
+
+  Future<void> _initializeAsync() async {
+    final windowStateJson = _storage.getString("windowState");
     final binding = WidgetsFlutterBinding.ensureInitialized();
 
     await windowManager.ensureInitialized();
@@ -47,13 +51,16 @@ final class NativeWindowService with WindowListener {
     windowManager.addListener(this);
   }
 
-  static Future<void> _initializeNewWindow(WidgetsBinding binding) async {
-    log("Initializing new window", name: "${NativeWindowService}");
+  @override
+  void onDispose() {
+    windowManager.removeListener(this);
+  }
 
+  static Future<void> _initializeNewWindow(WidgetsBinding binding) async {
     const windowOptions = WindowOptions(
       size: Size(1280 * 0.75, 720 * 0.75),
       center: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Color(0x00000000),
       title: _windowTitle,
     );
 
@@ -64,16 +71,11 @@ final class NativeWindowService with WindowListener {
   }
 
   static Future<void> _initializeExistingWindow(String windowStateJson) async {
-    log(
-      "Initializing window as ${windowStateJson}",
-      name: "${NativeWindowService}",
-    );
-
     final windowState = NativeWindowState.fromJson(windowStateJson);
 
     final windowOptions = WindowOptions(
       size: windowState.bounds.size,
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0x00000000),
       title: _windowTitle,
     );
 
@@ -108,7 +110,7 @@ final class NativeWindowService with WindowListener {
       ],
     );
 
-    final windowStateJson = _sharedPreferences.getString("windowState");
+    final windowStateJson = _storage.getString("windowState");
 
     final windowState = windowStateJson == null
         ? NativeWindowState(
@@ -126,12 +128,9 @@ final class NativeWindowService with WindowListener {
             )
             .toJson();
 
-    log(
-      "Saving window state: ${newWindowStateJson}",
-      name: "${NativeWindowService}",
-    );
+    logInfo("Saving ${newWindowStateJson}");
 
-    await _sharedPreferences.setString("windowState", newWindowStateJson);
+    await _storage.setString("windowState", newWindowStateJson);
   }
 
   @override
@@ -146,11 +145,12 @@ final class NativeWindowService with WindowListener {
 
   @override
   void onWindowResize() {
-    if (Platform.isWindows || Platform.isMacOS) {
-      return;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.windows || TargetPlatform.macOS:
+        return;
+      default:
+        _saveWindowState();
     }
-
-    _saveWindowState();
   }
 
   @override
@@ -160,11 +160,12 @@ final class NativeWindowService with WindowListener {
 
   @override
   void onWindowMove() {
-    if (Platform.isWindows || Platform.isMacOS) {
-      return;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.windows || TargetPlatform.macOS:
+        return;
+      default:
+        _saveWindowState();
     }
-
-    _saveWindowState();
   }
 
   @override

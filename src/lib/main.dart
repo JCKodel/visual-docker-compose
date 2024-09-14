@@ -1,14 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get_it/get_it.dart';
 import 'package:system_theme/system_theme.dart';
 
+import 'features/data/shared_preferences_storage.dart';
 import 'features/home/home_view.dart';
+import 'features/log/log.dart';
+import 'features/project_management/projects_service.dart';
+import 'features/storage/i_storage.dart';
 import 'features/window_management/native_window_service.dart';
 import 'gen/strings.g.dart';
 
 Future<void> main() async {
-  await NativeWindowService.instance.initialize();
+  logInfo("Bootstrapping");
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  GetIt.I.registerSingletonAsync(
+    SharedPreferencesStorage.factory,
+  );
+
+  GetIt.I.registerSingletonAsync(
+    ProjectsService.factory,
+    dependsOn: [IStorage],
+  );
+
+  GetIt.I.registerSingletonAsync(
+    NativeWindowService.factory,
+    dependsOn: [IStorage],
+  );
+
+  await GetIt.I.allReady();
+
   LocaleSettings.useDeviceLocale();
+
   runApp(TranslationProvider(child: const MainApp()));
 }
 
